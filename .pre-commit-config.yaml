@@ -1,0 +1,8 @@
+repos:
+- repo: local
+  hooks:
+  - id: format
+    name: Format
+    entry: aspect run //tools/format:format
+    language: system
+    types: [text]
