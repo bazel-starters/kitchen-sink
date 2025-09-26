@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "BazelBuild.vscode-bazel",
+
+    "ms-python.python",
+    "charliermarsh.ruff"
+  ]
+}
