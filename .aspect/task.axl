@@ -1,0 +1,4 @@
+# Re-export external task symbols
+load("@lint/lint/lint.axl", _lint = "lint")
+
+lint = _lint

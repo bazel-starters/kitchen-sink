@@ -1,0 +1,131 @@
+{
+  "$schema": "https://raw.githubusercontent.com/bazel-contrib/rules_multitool/main/lockfile.schema.json",
+  "aspect": {
+    "binaries": [
+      {
+        "kind": "file",
+        "url": "https://github.com/aspect-build/aspect-cli/releases/download/2024.01/aspect-cli_x86_64_unknown_linux_musl",
+        "os": "linux",
+        "cpu": "x86_64",
+        "sha256": "4179bd062c9a83a884825b66ce65ddfdd4977deefec718fa1686eb06b3551f39"
+      },
+      {
+        "kind": "file",
+        "url": "https://github.com/aspect-build/aspect-cli/releases/download/2024.01/aspect-cli_aarch64_apple_darwin",
+        "os": "linux",
+        "cpu": "arm64",
+        "sha256": "797a51f273d789f111c653391c0f8955ea873e8ca0bbab09ed87fc6317e8e89f"
+      }
+    ]
+  },
+  "buildozer": {
+    "binaries": [
+      {
+        "kind": "file",
+        "url": "https://github.com/bazelbuild/buildtools/releases/download/v7.3.1/buildozer-linux-arm64",
+        "sha256": "0b5a2a717ac4fc911e1fec8d92af71dbb4fe95b10e5213da0cc3d56cea64a328",
+        "os": "linux",
+        "cpu": "arm64"
+      },
+      {
+        "kind": "file",
+        "url": "https://github.com/bazelbuild/buildtools/releases/download/v7.3.1/buildozer-linux-amd64",
+        "sha256": "3305e287b3fcc68b9a35fd8515ee617452cd4e018f9e6886b6c7cdbcba8710d4",
+        "os": "linux",
+        "cpu": "x86_64"
+      },
+      {
+        "kind": "file",
+        "url": "https://github.com/bazelbuild/buildtools/releases/download/v7.3.1/buildozer-darwin-arm64",
+        "sha256": "31b1bfe20d7d5444be217af78f94c5c43799cdf847c6ce69794b7bf3319c5364",
+        "os": "macos",
+        "cpu": "arm64"
+      },
+      {
+        "kind": "file",
+        "url": "https://github.com/bazelbuild/buildtools/releases/download/v7.3.1/buildozer-darwin-amd64",
+        "sha256": "854c9583efc166602276802658cef3f224d60898cfaa60630b33d328db3b0de2",
+        "os": "macos",
+        "cpu": "x86_64"
+      }
+    ]
+  },
+  "gazelle": {
+    "binaries": [
+      {
+        "kind": "file",
+        "url": "https://github.com/alexeagle/gazelle-prebuilt/releases/download/2025.26.32+42206e7/gazelle-darwin_arm64_cgo",
+        "sha256": "5b405c8935f475587afa4c9a686664a2021ed68f068b14738ecb4862f322ce09",
+        "os": "macos",
+        "cpu": "arm64"
+      },
+      {
+        "kind": "file",
+        "url": "https://github.com/alexeagle/gazelle-prebuilt/releases/download/2025.26.32+42206e7/gazelle-linux_amd64_cgo",
+        "sha256": "1b5de748dd66b342f600e175c8e11bdb08e3ae4f723fea674e337aae285ae898",
+        "os": "linux",
+        "cpu": "x86_64"
+      },
+      {
+        "kind": "file",
+        "url": "https://github.com/alexeagle/gazelle-prebuilt/releases/download/2025.26.32+42206e7/gazelle-linux_arm64_cgo",
+        "sha256": "9f73d3637871d167294762dcdc1101ff53f4b53f578919689040bc73b5e784d3",
+        "os": "linux",
+        "cpu": "arm64"
+      }
+    ]
+  },
+  "ibazel": {
+    "binaries": [
+      {
+        "kind": "file",
+        "url": "https://github.com/bazelbuild/bazel-watcher/releases/download/v0.25.3/ibazel_linux_arm64",
+        "sha256": "3fa76bef2a1eac55975a0e6949c133d0a9898eb1e5425ce4f7df0289859f56c5",
+        "os": "linux",
+        "cpu": "arm64"
+      },
+      {
+        "kind": "file",
+        "url": "https://github.com/bazelbuild/bazel-watcher/releases/download/v0.25.3/ibazel_linux_amd64",
+        "sha256": "d8e1ea02777670a095719ed3800e9bbf814269b05edf901992c1e7c5eca0e3b6",
+        "os": "linux",
+        "cpu": "x86_64"
+      },
+      {
+        "kind": "file",
+        "url": "https://github.com/bazelbuild/bazel-watcher/releases/download/v0.25.3/ibazel_darwin_arm64",
+        "sha256": "c2da75cbab7a4b2b97ba534653bb12e4dd731157bb1c9d660f79df3b330a7239",
+        "os": "macos",
+        "cpu": "arm64"
+      }
+    ]
+  },
+  "starpls": {
+    "binaries": [
+      {
+        "kind": "archive",
+        "url": "https://github.com/withered-magic/starpls/releases/download/v0.1.21/starpls-linux-aarch64.tar.gz",
+        "file": "starpls",
+        "sha256": "2d2a97b7d2ed0a63a2a9acf74d1b17b6f5edb736556c6b2315634df8de97692b",
+        "os": "linux",
+        "cpu": "arm64"
+      },
+      {
+        "kind": "archive",
+        "url": "https://github.com/withered-magic/starpls/releases/download/v0.1.21/starpls-linux-amd64.tar.gz",
+        "file": "starpls",
+        "sha256": "f236de322c86ccd7562aa6814ec481cc1d01f99b9ee165509da9dc09fdb8d418",
+        "os": "linux",
+        "cpu": "x86_64"
+      },
+      {
+        "kind": "archive",
+        "url": "https://github.com/withered-magic/starpls/releases/download/v0.1.21/starpls-darwin-arm64.tar.gz",
+        "file": "starpls",
+        "sha256": "1542edc2ed597feca65455fe87a81436e091ae06a6c4e455dc9625f5a92905fb",
+        "os": "macos",
+        "cpu": "arm64"
+      }
+    ]
+  }
+}
