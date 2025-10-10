@@ -1,0 +1,4 @@
+# Re-export external task symbols
+load("@aspect_rules_lint/lint/lint.axl", _lint = "lint")
+
+lint = _lint
