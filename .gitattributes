@@ -1,0 +1,4 @@
+# List generated files
+# - prevents GitHub from showing deltas during code review
+# - informs the rules_lint formatter not to apply formatting rules
+maven_install.json     linguist-generated=true
