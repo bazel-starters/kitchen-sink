@@ -1,0 +1,20 @@
+# User-specific settings file for this repo
+.aspect/bazelrc/user.bazelrc
+
+# Don't check in lockfile for now. It is unstable.
+# https://github.com/bazelbuild/bazel/issues/19026
+# https://github.com/bazelbuild/bazel/issues/19621
+# https://github.com/bazelbuild/bazel/issues/19971
+# https://github.com/bazelbuild/bazel/issues/20272
+# https://github.com/bazelbuild/bazel/issues/20369
+MODULE.bazel.lock
+
+# Symlinks created by Bazel into the output tree
+/bazel-*
+
+
+node_modules/
+
+
+*.venv/
+
