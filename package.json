@@ -1,0 +1,15 @@
+{
+  "name": "scaffold-test-1642",
+  "private": true,
+  "packageManager": "pnpm@10.20.0",
+  "devDependencies": {
+    "@eslint/js": "^9",
+    "eslint": "^9",
+    "typescript-eslint": "^8",
+    "typescript": "5.9.3",
+    "prettier": "^3"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": []
+  }
+}
