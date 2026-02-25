@@ -1,0 +1,21 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+
+PLATFORMS
+  aarch64-linux-gnu
+  aarch64-linux-musl
+  arm64-darwin
+  ruby
+  x86-linux-gnu
+  x86-linux-musl
+  x86_64-darwin
+  x86_64-linux-gnu
+  x86_64-linux-musl
+
+DEPENDENCIES
+
+CHECKSUMS
+
+BUNDLED WITH
+   2.6.2

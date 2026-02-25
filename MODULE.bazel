@@ -1,0 +1,263 @@
+# Currently bazel-lib is only load()ed when platforms is used.
+bazel_dep(name = "bazel_lib", version = "3.1.1")
+bazel_dep(name = "aspect_bazel_lib", version = "2.22.5", repo_name = None)  # force a recent version that works with v3
+bazel_dep(name = "platforms", version = "1.0.0")
+bazel_dep(name = "apple_support", version = "2.2.0")
+bazel_dep(name = "aspect_rules_lint", version = "2.0.0")
+bazel_dep(name = "buildifier_prebuilt", version = "8.2.1.1")
+bazel_dep(name = "bazel_skylib", version = "1.9.0")
+bazel_dep(name = "rules_multitool", version = "1.11.1")
+bazel_dep(name = "bazel_env.bzl", version = "0.5.0")
+bazel_dep(name = "bazelrc-preset.bzl", version = "1.8.0")
+
+# We have to take a dependency on rules_python in order to set bootstrap=script
+# for transitive dependencies, even if there are no Python rules used in this repo.
+# See .bazelrc
+bazel_dep(name = "rules_python", version = "1.8.3")
+bazel_dep(name = "gazelle", version = "0.47.0")
+bazel_dep(name = "rules_shell", version = "0.6.1")
+bazel_dep(name = "rules_oci", version = "2.2.7")
+bazel_dep(name = "tar.bzl", version = "0.8.1")
+
+multitool = use_extension("@rules_multitool//multitool:extension.bzl", "multitool")
+multitool.hub(lockfile = "//tools:tools.lock.json")
+use_repo(multitool, "multitool")
+
+#########################
+# Go
+bazel_dep(name = "rules_go", version = "0.59.0")
+
+go_sdk = use_extension("@rules_go//go:extensions.bzl", "go_sdk")
+
+# Download an SDK for the host OS & architecture as well as common remote execution
+# platforms, using the version given from the `go.mod` file.
+go_sdk.from_file(go_mod = "//:go.mod")
+go_sdk.nogo(nogo = "//tools/lint:nogo")
+
+go_deps = use_extension("@gazelle//:extensions.bzl", "go_deps")
+go_deps.from_file(go_mod = "//:go.mod")
+
+# All *direct* Go dependencies of the module have to be listed explicitly.
+# Run 'bazel mod tidy' to update this
+use_repo(go_deps, "com_github_hay_kot_scaffold")
+
+# Bazel 9: Ensure transitives don't depend on rules_nodejs prior to
+# https://github.com/bazel-contrib/rules_nodejs/commit/1fc6b6b763c4f79994edc9edab10399f7446d8be
+bazel_dep(name = "rules_nodejs", version = "6.7.3")
+bazel_dep(name = "aspect_rules_js", version = "2.9.2")
+bazel_dep(name = "aspect_rules_ts", version = "3.8.3")
+
+#########################
+# JavaScript and pnpm package manager
+node = use_extension("@rules_nodejs//nodejs:extensions.bzl", "node")
+node.toolchain(node_version_from_nvmrc = "//:.nvmrc")
+use_repo(node, "nodejs_toolchains")
+
+pnpm = use_extension("@aspect_rules_js//npm:extensions.bzl", "pnpm")
+pnpm.pnpm(pnpm_version_from = "//:package.json")
+use_repo(pnpm, "pnpm")
+
+npm = use_extension("@aspect_rules_js//npm:extensions.bzl", "npm")
+npm.npm_translate_lock(
+    name = "npm",
+    npmrc = "//:.npmrc",
+    pnpm_lock = "//:pnpm-lock.yaml",
+)
+use_repo(npm, "npm")
+
+rules_ts_ext = use_extension("@aspect_rules_ts//ts:extensions.bzl", "ext")
+rules_ts_ext.deps()
+use_repo(rules_ts_ext, "npm_typescript")
+
+#########################
+# Hermetic Python interpreter and pip dependencies
+bazel_dep(name = "rules_python_gazelle_plugin", version = "1.8.3")
+bazel_dep(name = "aspect_rules_py", version = "1.8.4")
+bazel_dep(name = "rules_uv", version = "0.89.2")
+
+pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
+
+python = use_extension("@rules_python//python/extensions:python.bzl", "python")
+python.toolchain(
+    python_version = "3.12",
+)
+
+pip.parse(
+    hub_name = "pip",
+    python_version = "3.12",
+    requirements_lock = "//requirements:all.txt",
+)
+use_repo(pip, "pip")
+
+bazel_dep(name = "rules_cc", version = "0.2.16")
+bazel_dep(name = "toolchains_llvm", version = "1.6.0")
+
+#########################
+# Hermetic C++ toolchain, to relieve the dependency on a locally installed CC etc.
+llvm = use_extension("@toolchains_llvm//toolchain/extensions:llvm.bzl", "llvm")
+llvm.toolchain(
+    # NB: llvm doesn't release for all platforms on every patch release
+    llvm_versions = {
+        "": "15.0.6",
+        "darwin-aarch64": "15.0.7",
+        "darwin-x86_64": "15.0.7",
+    },
+)
+use_repo(llvm, "llvm_toolchain", "llvm_toolchain_llvm")
+
+register_toolchains("@llvm_toolchain//:all")
+
+# bazel run @hedron_compile_commands//:refresh_all
+bazel_dep(name = "hedron_compile_commands")
+git_override(
+    module_name = "hedron_compile_commands",
+    commit = "abb61a688167623088f8768cc9264798df6a9d10",
+    remote = "https://github.com/hedronvision/bazel-compile-commands-extractor.git",
+)
+
+#########################
+# Support for Rust, see https://github.com/bazelbuild/rules_rust
+bazel_dep(name = "rules_rust", version = "0.68.1")
+bazel_dep(name = "rules_rs", version = "0.0.26")
+
+rust = use_extension("@rules_rust//rust:extensions.bzl", "rust")
+rust.toolchain(
+    edition = "2021",
+    versions = ["1.75.0"],
+)
+
+crate = use_extension("@rules_rs//rs:extensions.bzl", "crate")
+crate.from_cargo(
+    name = "crates",
+    cargo_lock = "//:Cargo.lock",
+    cargo_toml = "//:Cargo.toml",
+    platform_triples = [
+        "aarch64-apple-darwin",
+        "aarch64-unknown-linux-gnu",
+        "x86_64-apple-darwin",
+        "x86_64-unknown-linux-gnu",
+    ],
+)
+use_repo(crate, "crates")
+
+#########################
+# Support for Ruby, see https://github.com/bazel-contrib/rules_ruby
+bazel_dep(name = "rules_ruby")  # version = "0.21.1")
+git_override(
+    module_name = "rules_ruby",
+    commit = "13688af7048c0aa95d4821df29b695f6816487d0",
+    remote = "https://github.com/bazel-contrib/rules_ruby.git",
+)
+
+ruby = use_extension("@rules_ruby//ruby:extensions.bzl", "ruby")
+ruby.toolchain(
+    name = "ruby",
+    version_file = "//:.ruby-version",
+)
+use_repo(ruby, "ruby", "ruby_toolchains")
+
+register_toolchains("@ruby_toolchains//:all")
+
+ruby.bundle_fetch(
+    name = "bundle",
+    gemfile = "//:Gemfile",
+    gemfile_lock = "//:Gemfile.lock",
+)
+use_repo(ruby, "bundle")
+
+#########################
+# Java and other JVM languages
+bazel_dep(name = "rules_java", version = "9.3.0")
+bazel_dep(name = "rules_jvm_external", version = "6.9")
+
+maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
+
+# In the Maven support variation, the dependencies are conveniently listed here
+# in the MODULE.bazel file.
+maven.install(
+    artifacts = ["io.grpc:grpc-all:1.51.1"],
+    lock_file = "//:maven_install.json",
+)
+use_repo(
+    maven,
+    "maven",
+    "unpinned_maven",
+)
+
+http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+http_archive(
+    name = "net_sourceforge_pmd",
+    build_file_content = "\n".join([
+        """load("@rules_java//java:java_import.bzl", "java_import")""",
+        """java_import(name = "net_sourceforge_pmd", jars = glob(["*.jar"]), visibility = ["//visibility:public"])""",
+    ]),
+    integrity = "sha256-vov2j2wdZphL2WRak+Yxt4ocL0L18PhxkIL+rWdVOUA=",
+    strip_prefix = "pmd-bin-7.7.0/lib",
+    url = "https://github.com/pmd/pmd/releases/download/pmd_releases/7.7.0/pmd-dist-7.7.0-bin.zip",
+)
+
+bazel_dep(name = "rules_kotlin", version = "2.2.2")
+
+# Force a transitive resolution of rules_android to pick up Bazel 9 fixes
+bazel_dep(name = "rules_android", version = "0.7.1", repo_name = None)
+
+http_jar = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_jar")
+
+http_jar(
+    name = "ktfmt",
+    integrity = "sha256-l/x/vRlNAan6RdgUfAVSQDAD1VusSridhNe7TV4/SN4=",
+    url = "https://repo1.maven.org/maven2/com/facebook/ktfmt/0.46/ktfmt-0.46-jar-with-dependencies.jar",
+)
+
+http_file = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
+
+http_file(
+    name = "com_github_pinterest_ktlint",
+    executable = True,
+    sha256 = "2e28cf46c27d38076bf63beeba0bdef6a845688d6c5dccd26505ce876094eb92",
+    url = "https://github.com/pinterest/ktlint/releases/download/1.2.1/ktlint",
+)
+
+bazel_dep(name = "rules_scala", version = "7.1.6")
+
+scala_config = use_extension(
+    "@rules_scala//scala/extensions:config.bzl",
+    "scala_config",
+)
+scala_config.settings(scala_version = "2.13.17")
+
+# See the `scala/extensions/deps.bzl` docstring for a high level description of
+# the tag classes exported by this module extension.
+scala_deps = use_extension(
+    "@rules_scala//scala/extensions:deps.bzl",
+    "scala_deps",
+)
+scala_deps.scala()
+
+oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
+
+# Base image for GO Containers.
+oci.pull(
+    name = "distroless_base",
+    digest = "sha256:9e9b50d2048db3741f86a48d939b4e4cc775f5889b3496439343301ff54cdba8",
+    image = "gcr.io/distroless/base",
+    platforms = [
+        "linux/amd64",
+        "linux/arm64",
+    ],
+)
+use_repo(oci, "distroless_base", "distroless_base_linux_amd64", "distroless_base_linux_arm64")
+
+oci.pull(
+    name = "python_base",
+    digest = "sha256:c35e29c9450151419d9448b0fd75374fec4fff364a27f176fb458d472dfc9e54",
+    image = "ubuntu",
+    platforms = [
+        "linux/arm64/v8",
+        "linux/amd64",
+    ],
+)
+use_repo(oci, "python_base", "python_base_linux_amd64", "python_base_linux_arm64_v8")
+
+register_toolchains("//tools/toolchains:all")
