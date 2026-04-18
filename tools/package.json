@@ -1,0 +1,7 @@
+{
+  "name": "monorepo-tools",
+  "private": "true",
+  "devDependencies": {
+    "yo": "~5.1.0"
+  }
+}
